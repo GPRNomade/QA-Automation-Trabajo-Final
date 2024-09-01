@@ -1,0 +1,12 @@
+{
+  "standard_user":{
+    "user": "standard_user",
+    "password": "secret_sauce"
+  },
+
+  "problem_user":{
+    "user": "problem_user",
+    "password": "secret_sauce"
+  }
+  
+}
