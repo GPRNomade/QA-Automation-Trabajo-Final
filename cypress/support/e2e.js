@@ -16,5 +16,12 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import './login/login'
+import './checkout/formUserCheckout'
+import './checkout/okMsgsCheck'
+import './checkout/validateTotals'
+import './urlCheck/urlCheck'
+import './loadProdList/loadProdList'
+import './validateCartItems/validateCartItems'
+
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
