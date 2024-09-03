@@ -1,18 +1,19 @@
-describe('Usuario Standard', {testIsolation:false}, () => {
-  before(() => {
-    // Cargar los datos del fixture antes de que comiencen los tests
-    cy.loadProdList().then(() => {
-        // Alias cada item individualmente
-        cy.get('@prodItems').then((prodItems) => {
-            for (const key in prodItems) {
-                cy.wrap(prodItems[key]).as(key);
-            }
-        });
-    });
+beforeEach(() => {
+  // Cargar los datos del fixture antes de que comiencen los tests
+  cy.loadProdList().then(() => {
+      // Alias cada item individualmente
+      cy.get('@prodItems').then((prodItems) => {
+          for (const key in prodItems) {
+              cy.wrap(prodItems[key]).as(key);
+          }
+      });
   });
+});
 
-  it('Login Usuario Standard', () => {
+describe('Compra con user 1', {testIsolation:false}, () => {
+  it('Login Usuario Standard', () => {  
     cy.visit('https://www.saucedemo.com/');
+    cy.captureScreenshot();
     cy.fixture('data.json').then((data) => {
       const usuarioStandard = data['standard_user'];
       cy.login(
@@ -20,7 +21,9 @@ describe('Usuario Standard', {testIsolation:false}, () => {
         usuarioStandard.password
       );
     })
+    
     cy.urlCheck('/inventory');
+    cy.captureScreenshot();
     
   })
 
@@ -34,7 +37,7 @@ describe('Usuario Standard', {testIsolation:false}, () => {
       cy.wrap(buttons).each((button) => {
           cy.wrap(button).find('button').contains('Add to cart').click();
       });
-
+      cy.captureScreenshot();
       // Traer el array de objetos agregados en el localStorage y comparar con la cantidad agregada anteriormente
       cy.getAllLocalStorage().then((localStorageContent) => {
           let cartContentsText;
@@ -59,13 +62,13 @@ describe('Usuario Standard', {testIsolation:false}, () => {
     
     //check url cart
     cy.urlCheck('/cart');   
-    
+    cy.captureScreenshot();
     //validacion items carrito
     
-    cy.get('@prodItems').then(() => {
-      cy.validateCartItems();
-    });
-
+    cy.validateCartItems();
+    cy.get('#checkout').should('be.visible', 'be.enabled');
+    cy.get('#continue-shopping').should('be.visible', 'be.enabled');
+    cy.captureScreenshot();
   })
 
 
@@ -84,30 +87,32 @@ describe('Usuario Standard', {testIsolation:false}, () => {
 
     //validar estar en la pagina /checkout-step-one
     cy.urlCheck('/checkout-step-one');
-
+    cy.captureScreenshot();
     //llenar datos
     cy.fixture('userCheckout.json').then((userCheckout) => {
       cy.formCheckout(userCheckout)
     })
-
+    cy.captureScreenshot();
     //validar estar en la pag overview
     cy.urlCheck('/checkout-step-two');
-
+    cy.captureScreenshot();
     //validar prod + precio total (ver)
     cy.validateCartItems();
     cy.validateTotals();
 
     //click en finish
+    cy.get('#cancel').should('be.visible', 'be.enabled')
     cy.get('#finish').should('be.visible', 'be.enabled').click()
     //validar checkout-complete página, mensajes
     cy.urlCheck('/checkout-complete');
-    
+    cy.captureScreenshot();
 
     cy.okMsgsCheck();
 
     //click botón back home
     cy.get('#back-to-products').should('be.visible', 'be.enabled').click()
     cy.urlCheck('/inventory');
+    cy.captureScreenshot();
     //validar carrito vacío (ver si se puede reutilizar el command de get alllocalsotrage)
     let cartContentsText;
     cy.getAllLocalStorage().then((localStorageContent) => {
@@ -122,15 +127,12 @@ describe('Usuario Standard', {testIsolation:false}, () => {
         cy.log(`El carrito tiene una cantidad distinta de items agregados: ${cartContentsText ? cartContentsText : 'no definido'}`);
       }
     }) 
-
-    cy.get('#react-burger-menu-btn').click()
-    cy.get('#reset_sidebar_link').click()
-    cy.clearAllLocalStorage();
   })
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   it('Logout Usuario Standard',()=>{
+    
     cy.get('#react-burger-menu-btn').click()
     cy.get('#reset_sidebar_link').click()
     cy.clearAllLocalStorage();
@@ -150,13 +152,7 @@ describe('Usuario Standard', {testIsolation:false}, () => {
 
 
 
-describe('Usuario Problemático', {testIsolation:false}, () => {
-  before(() => {
-    // Cargar los datos del fixture antes de que comiencen los tests
-    cy.loadProdList();
-    
-  }); 
-
+describe('Compra con user 2', {testIsolation:false}, () => {
   it('Login Usuario Problematico', () => {
     cy.visit('https://www.saucedemo.com/');
     cy.fixture('data.json').then((data) => {
@@ -203,21 +199,13 @@ describe('Usuario Problemático', {testIsolation:false}, () => {
 
     //click en el cart
     cy.get('.shopping_cart_link').should('be.visible', 'be.enabled').click()
-    
+   
     //check url cart
     cy.urlCheck('/cart');   
-    
+    cy.captureScreenshot()
     //validacion items carrito
-    cy.get('@prodItems').then((prodItems) => {
-      // Alias cada item individualmente
-      for (const key in prodItems) {
-          cy.wrap(prodItems[key]).as(key);
-      }
-    }).then(() => {
-      // Llamar al comando validateCartItems
-      cy.validateCartItems();
-    });
-
+    cy.validateCartItems();
+    cy.captureScreenshot()
   })
 
 
@@ -236,7 +224,7 @@ describe('Usuario Problemático', {testIsolation:false}, () => {
 
     //validar estar en la pagina /checkout-step-one
     cy.urlCheck('/checkout-step-one');
-
+    cy.captureScreenshot()
     //llenar datos
     cy.fixture('userCheckout.json').then((userCheckout) => {
       cy.formCheckout(userCheckout)
@@ -253,13 +241,14 @@ describe('Usuario Problemático', {testIsolation:false}, () => {
     cy.get('#finish').should('be.visible', 'be.enabled').click()
     //validar checkout-complete página, mensajes
     cy.urlCheck('/checkout-complete');
-    
+    cy.captureScreenshot()
 
     cy.okMsgsCheck();
 
     //click botón back home
     cy.get('#back-to-products').should('be.visible', 'be.enabled').click()
     cy.urlCheck('/inventory');
+    cy.captureScreenshot()
     //validar carrito vacío (ver si se puede reutilizar el command de get alllocalsotrage)
     let cartContentsText;
     cy.getAllLocalStorage().then((localStorageContent) => {
@@ -275,9 +264,6 @@ describe('Usuario Problemático', {testIsolation:false}, () => {
       }
     }) 
 
-    cy.get('#react-burger-menu-btn').click()
-    cy.get('#reset_sidebar_link').click()
-    cy.clearAllLocalStorage();
   })
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,7 +273,9 @@ describe('Usuario Problemático', {testIsolation:false}, () => {
     cy.get('#reset_sidebar_link').click()
     cy.clearAllLocalStorage();
     cy.get('#logout_sidebar_link').click()
+    cy.captureScreenshot()
     cy.urlCheck('https://www.saucedemo.com/');
+    cy.captureScreenshot()
   })
 
 // cuando haga las validaciones del plp: cy.get('#item_0_title_link inventory_item_img').should('have.attr', 'src').should('not.have.text', '404')

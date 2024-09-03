@@ -19,7 +19,7 @@ Cypress.Commands.add('validateTotals', () => {
                             ];
 
                             // Calcular subtotal, impuestos y total
-                            const subtotal = prices.reduce((acc, price) => acc + price, 0);
+                            const subtotal = prices.reduce((acc, price) => acc + price, 0);   
                             const taxes = subtotal * taxRate;
                             const total = subtotal + taxes;
 

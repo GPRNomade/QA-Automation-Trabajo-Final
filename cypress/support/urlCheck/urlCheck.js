@@ -7,5 +7,6 @@ Cypress.Commands.add('urlCheck', (expectedUrl) => {
             .then(() => {
                 cy.log(`Usuario Standard está en la página correcta ${expectedUrl}`);
             });
+        cy.captureScreenshot();
     });
 });
